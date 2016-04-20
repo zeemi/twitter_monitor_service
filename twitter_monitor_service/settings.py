@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'twitter_stats',
+    'rest_framework'
 )
 
 MIDDLEWARE_CLASSES = (
