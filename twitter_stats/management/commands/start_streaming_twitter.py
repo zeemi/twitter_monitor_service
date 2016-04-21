@@ -24,8 +24,7 @@ class TweetListener(StreamListener):
     def on_data(self, data):
         try:
             user_name, user_screen_name = parse_tweet(data)
-            print(data)
-            # Tweet(user_name=user_name, user_screen_name=user_screen_name).save()
+            Tweet(user_name=user_name, user_screen_name=user_screen_name).save()
             print("increment stats for user:", user_name)
         except UnsupportedMessage:
             print("Message ignored: ", data)
@@ -50,8 +49,9 @@ def parse_tweet(raw_tweet):
         return user_name, user_screen_name
     except ValueError:
         raise UnsupportedMessage
-    except TypeError:
+    except KeyError:
         raise UnsupportedMessage
+
 
 def twitter_streaming_task(filter=('golang')):
     l = TweetListener()

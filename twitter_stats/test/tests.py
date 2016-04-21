@@ -12,19 +12,34 @@ class TestTweetParser(unittest.TestCase):
         from twitter_stats.test.resources import raw_tweet
 
         user_name, user_screen_name = parse_tweet(raw_tweet)
-        self.assertEqual(user_name, 'Cayetano Benavent V.')
-        self.assertEqual(user_screen_name, 'cayetanobv')
+        self.assertEqual(user_name, 'EDA')
+        self.assertEqual(user_screen_name, 'cicilibirkiz')
 
-    def test_parsing_heathbeat_tweet(self):
+    def test_heath_beat_tweet_should_be_ignored(self):
         from twitter_stats.test.resources import emtpy_tweet
         with self.assertRaises(UnsupportedMessage):
-            user_name, user_screen_name = parse_tweet(emtpy_tweet)
+            parse_tweet(emtpy_tweet)
+
+    def test_management_massages_should_be_ignored(self):
+        from twitter_stats.test.resources import disconnect_msg
+        with self.assertRaises(UnsupportedMessage):
+            parse_tweet(disconnect_msg)
 
 
 class TestTweetListener(django.test.TestCase):
-    def test_tweet_creation(self):
+    def test_tweet_should_be_saved_in_db_when_caught_by_twitter_stream_listener(self):
         from twitter_stats.test.resources import raw_tweet
-        #todo add test for tweed creation
+
+        tweetl = TweetListener()
+        tweet_no = len(Tweet.objects.all())
+        self.assertEqual(tweet_no, 0)
+        tweetl.on_data(raw_tweet)
+        tweets = Tweet.objects.all()
+
+        self.assertEqual(len(tweets), 1)
+        self.assertEqual(tweets[0].user_name, 'EDA')
+        self.assertEqual(tweets[0].user_screen_name, 'cicilibirkiz')
+
 
 
 class TestStats(APITestCase):
